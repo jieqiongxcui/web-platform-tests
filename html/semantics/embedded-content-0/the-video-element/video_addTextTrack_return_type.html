@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Video Test: addTextTrack method of video element</title>
+<link rel="author" title="Intel" href="http://www.intel.com">
+<link rel="help" href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="log"></div>
+<video id="video1">
+  Your browser does not support HTML5 video.
+</video>
+<script>
+
+test(function() {
+  var v = document.getElementById('video1');
+  assert_equals(Object.prototype.toString.call(v.addTextTrack("caption")), "[object TextTrack]", "The return type of addTextTrack method");
+}, "Check if the addTextTrack method of video element must return TextTrack object");
+
+</script>
+
