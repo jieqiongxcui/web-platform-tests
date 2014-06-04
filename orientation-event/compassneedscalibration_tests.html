@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>DeviceOrientationEvent Tests</title>
+<link rel="author" title="Intel" href="http://www.intel.com">
+<link rel="help" href="http://dev.w3.org/geo/api/spec-source-orientation.html#compassneedscalibration">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="log"></div>
+<script>
+(function() {
+  test(function() {
+    var desc = "Expected to find oncompassneedscalibration attribute on window object";
+    assert_inherits(window, "oncompassneedscalibration", desc);
+  }, "oncompassneedscalibration event hander attribute must be on window object.");
+
+  test(function() {
+    var desc = "window.oncompassneedscalibration must be null";
+    assert_equals(window.oncompassneedscalibration, null, desc);
+  }, "oncompassneedscalibration is null");
+
+  test(function() {
+    var desc = "window.oncompassneedscalibration did not accept callable object",
+        func = function() {};
+    window.oncompassneedscalibration = func;
+    assert_equals(window.oncompassneedscalibration, func, desc);
+  }, "oncompassneedscalibration set to function");
+
+  test(function() {
+    var desc = "window.oncompassneedscalibration did not treat noncallable as null";
+    window.oncompassneedscalibration = function() {};
+    window.oncompassneedscalibration = {};
+    assert_equals(window.oncompassneedscalibration, null, desc);
+  }, "treat object as null");
+
+  test(function() {
+    var desc = "window.oncompassneedscalibration did not treat noncallable as null";
+    window.oncompassneedscalibration = function() {};
+    window.oncompassneedscalibration = {
+      call: "test"
+    };
+    assert_equals(window.oncompassneedscalibration, null, desc);
+  }, "treat object with non-callable call property as null");
+
+  test(function() {
+    var desc = "window.oncompassneedscalibration did not treat noncallable (string) as null";
+    window.oncompassneedscalibration = function() {};
+    window.oncompassneedscalibration = "string";
+    assert_equals(window.oncompassneedscalibration, null, desc);
+  }, "treat string as null");
+
+  test(function() {
+    var desc = "window.oncompassneedscalibration did not treat noncallable (number) as null";
+    window.oncompassneedscalibration = function() {};
+    window.oncompassneedscalibration = 123;
+    assert_equals(window.oncompassneedscalibration, null, desc);
+  }, "treat number as null");
+
+  test(function() {
+    var desc = "window.oncompassneedscalibration did not treat noncallable (undefined) as null";
+    window.oncompassneedscalibration = function() {};
+    window.oncompassneedscalibration = undefined;
+    assert_equals(window.oncompassneedscalibration, null, desc);
+  }, "treat undefined as null");
+
+  test(function() {
+    var desc = "window.oncompassneedscalibration did not treat noncallable (array) as null";
+    window.oncompassneedscalibration = function() {};
+    window.oncompassneedscalibration = [];
+    assert_equals(window.oncompassneedscalibration, null, desc);
+  }, "treat array as null");
+
+  test(function() {
+    var desc = "window.oncompassneedscalibration did not treat noncallable host object as null";
+    window.oncompassneedscalibration = function() {};
+    window.oncompassneedscalibration = window.Node;
+    assert_equals(window.oncompassneedscalibration, null, desc);
+  }, "treat non-callable host object as null");
+})();
+</script>
+

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>DeviceMotionEvent Tests</title>
+<link rel="author" title="Intel" href="http://www.intel.com">
+<link rel="help" href="http://dev.w3.org/geo/api/spec-source-orientation.html#devicemotion">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="log"></div>
+<script>
+(function() {
+  // [Constructor(DOMString type, optional DeviceMotionEventInit eventInitDict)]
+  // inheritance tests
+  test(function() {
+    var event = new DeviceMotionEvent("");
+    assert_true(event instanceof window.DeviceMotionEvent);
+  }, "the event is an instance of DeviceMotionEvent");
+
+  test(function() {
+    var event = new DeviceMotionEvent("");
+    assert_true(event instanceof window.Event);
+  }, "the event inherits from Event");
+
+  // type argument tests
+  test(function() {
+    assert_throws(new TypeError(), function() {
+      new DeviceMotionEvent();
+    }, "First argument is required, so was expecting a TypeError.");
+  }, "Missing type argument");
+
+  test(function() {
+    var event = new DeviceMotionEvent(undefined);
+    assert_equals(event.type, "undefined");
+  }, "Event type set to undefined");
+
+  test(function() {
+    var event = new DeviceMotionEvent(null);
+    assert_equals(event.type, "null");
+  }, "type argument is null");
+
+  test(function() {
+    var event = new DeviceMotionEvent(123);
+    assert_equals(event.type, "123");
+  }, "type argument is number");
+
+  test(function() {
+    var event = new DeviceMotionEvent(new Number(123));
+    assert_equals(event.type, "123");
+  }, "type argument is Number");
+
+  test(function() {
+    var event = new DeviceMotionEvent([]);
+    assert_equals(event.type, "");
+  }, "type argument is array");
+
+  test(function() {
+    var event = new DeviceMotionEvent(new Array());
+    assert_equals(event.type, "");
+  }, "type argument is instance of Array");
+
+  test(function() {
+    var event = new DeviceMotionEvent(["t", ["e", ["s", ["t"]]]]);
+    assert_equals(event.type, "t,e,s,t");
+  }, "type argument is nested array");
+
+  test(function() {
+    var event = new DeviceMotionEvent(Math);
+    assert_equals(event.type, "[object Math]");
+  }, "type argument is host object");
+
+  test(function() {
+    var event = new DeviceMotionEvent(true);
+    assert_equals(event.type, "true");
+  }, "type argument is boolean (true)");
+
+  test(function() {
+    var event = new DeviceMotionEvent(new Boolean(true));
+    assert_equals(event.type, "true");
+  }, "type argument is instance of Boolean (true)");
+
+  test(function() {
+    var event = new DeviceMotionEvent(false);
+    assert_equals(event.type, "false");
+  }, "type argument is boolean (false)");
+
+  test(function() {
+    var event = new DeviceMotionEvent(new Boolean(false));
+    assert_equals(event.type, "false");
+  }, "type argument is instance of Boolean (false)");
+
+  test(function() {
+    var event = new DeviceMotionEvent("test");
+    assert_equals(event.type, "test");
+  }, "type argument is string");
+
+  test(function() {
+    var event = new DeviceMotionEvent(new String("test"));
+    assert_equals(event.type, "test");
+  }, "type argument is instance of String");
+
+  test(function() {
+    var event = new DeviceMotionEvent(function test() {});
+    assert_regexp_match(event.type, /function test.+{\s?}/);
+  }, "type argument is function");
+
+  test(function() {
+    var event = new DeviceMotionEvent({
+      toString: function() {
+        return "123";
+      }
+    });
+    assert_equals(event.type, "123");
+  }, "type argument is complext object, with toString method");
+
+  test(function() {
+    assert_throws(null, function() {
+      new DeviceMotionEvent({
+        toString: function() {
+          return function() {}
+        }
+      });
+    });
+  }, "toString is of type function");
+
+  //eventInitDict attribute tests
+  test(function() {
+    var event = new DeviceMotionEvent("test", undefined);
+    assert_equals(event.acceleration, null);
+    assert_equals(event.accelerationIncludingGravity, null);
+    assert_equals(event.rotationRate, null);
+    assert_equals(event.interval, 0);
+  }, "eventInitDict argument sets to undefined");
+
+  test(function() {
+    var event = new DeviceMotionEvent("test", null);
+    assert_equals(event.acceleration, null);
+    assert_equals(event.accelerationIncludingGravity, null);
+    assert_equals(event.rotationRate, null);
+    assert_equals(event.interval, 0);
+  }, "eventInitDict argument is null");
+
+  test(function() {
+    var date = new Date();
+    assert_throws(new TypeError(), function() {
+      new DeviceMotionEvent("test", date);
+    });
+  }, "eventInitDict argument is Date object");
+
+  test(function() {
+    var regexp = /abc/;
+    assert_throws(new TypeError(), function() {
+      new DeviceMotionEvent("test", regexp);
+    });
+  }, "eventInitDict argument is RegExp object");
+
+  test(function() {
+    assert_throws(new TypeError(), function() {
+      new DeviceMotionEvent("test", false);
+    });
+  }, "eventInitDict argument is boolean");
+
+  test(function() {
+    assert_throws(new TypeError(), function() {
+      new DeviceMotionEvent("test", 123);
+    });
+  }, "eventInitDict argument is number");
+
+  test(function() {
+    assert_throws(new TypeError(), function() {
+      new DeviceMotionEvent("test", "hello");
+    });
+  }, "eventInitDict argument is string");
+
+  var i = 0;
+  var object = { };
+  var array = [];
+  var regexp = /abc/;
+  var valuesObject = [
+    undefined,  null,      "undefined",
+    null,       null,      "null",
+    false,      undefined, "false",
+    0,          undefined, "0",
+    "",         undefined, '""',
+    document,   document,  "document",
+    object,     object,    "{ }",
+    array,      array,     "[]",
+    regexp,     regexp,    "/abc/"
+  ];
+
+  // readonly attribute DeviceAcceleration? acceleration;
+  test(function() {
+    var event = new DeviceMotionEvent("test");
+    assert_readonly(event, "acceleration", "readonly attribute acceleration");
+  }, "acceleration is readonly");
+
+  test(function() {
+    var event = new DeviceMotionEvent("test");
+    assert_equals(event.acceleration, null);
+  }, "acceleration initializes to null");
+
+  for (i = 0; i < valuesObject.length; i += 3) {
+    var value = valuesObject[i];
+    var expected = valuesObject[i + 1];
+    var desc = valuesObject[i + 2];
+    test(function() {
+      if (expected !== undefined) {
+        var event = new DeviceMotionEvent("test", {
+          acceleration: value
+        });
+        assert_equals(event.acceleration, expected);
+      } else {
+        assert_throws(new TypeError(), function() {
+          new DeviceMotionEvent("test", {
+            acceleration: value
+          });
+        });
+      }
+    }, "acceleration set to " + desc);
+  }
+
+  // readonly attribute DeviceAcceleration? accelerationIncludingGravity;
+  test(function() {
+    var event = new DeviceMotionEvent("test");
+    assert_readonly(event, "accelerationIncludingGravity", "readonly attribute accelerationIncludingGravity");
+  }, "accelerationIncludingGravity is readonly");
+
+  test(function() {
+    var event = new DeviceMotionEvent("test");
+    assert_equals(event.accelerationIncludingGravity, null);
+  }, "accelerationIncludingGravity initializes to null");
+
+  for (i = 0; i < valuesObject.length; i += 3) {
+    var value = valuesObject[i];
+    var expected = valuesObject[i + 1];
+    var desc = valuesObject[i + 2];
+    test(function() {
+      if (expected !== undefined) {
+        var event = new DeviceMotionEvent("test", {
+          accelerationIncludingGravity: value
+        });
+        assert_equals(event.accelerationIncludingGravity, expected);
+      } else {
+        assert_throws(new TypeError(), function() {
+          new DeviceMotionEvent("test", {
+            accelerationIncludingGravity: value
+          });
+        });
+      }
+    }, "accelerationIncludingGravity set to " + desc);
+  }
+
+  // readonly attribute DeviceRotationRate? rotationRate;
+  test(function() {
+    var event = new DeviceMotionEvent("test");
+    assert_readonly(event, "rotationRate", "readonly attribute rotationRate");
+  }, "rotationRate is readonly");
+
+  test(function() {
+    var event = new DeviceMotionEvent("test");
+    assert_equals(event.rotationRate, null);
+  }, "rotationRate initializes to null");
+
+  for (i = 0; i < valuesObject.length; i += 3) {
+    var value = valuesObject[i];
+    var expected = valuesObject[i + 1];
+    var desc = valuesObject[i + 2];
+    test(function() {
+      if (expected !== undefined) {
+        var event = new DeviceMotionEvent("test", {
+          rotationRate: value
+        });
+        assert_equals(event.rotationRate, expected);
+      } else {
+        assert_throws(new TypeError(), function() {
+          new DeviceMotionEvent("test", {
+            rotationRate: value
+          });
+        });
+      }
+    }, "rotationRate set to " + desc);
+  }
+
+  var valuesDouble = [
+    undefined,           undefined,          "undefined",
+    null,                0,                  "null",
+    false,               0,                  "false",
+    true,                1,                  "true",
+    0,                   0,                  "0",
+    1,                   1,                  "1",
+    -1,                  -1,                 "-1",
+    0.5,                 0.5,                "0.5",
+    Infinity,            undefined,          "Infinity",
+    -Infinity,           undefined,          "-Infinity",
+    NaN,                 undefined,          "NaN",
+    -0,                  -0,                 "-0",
+    "",                  0,                  '""',
+    "1",                 1,                  '"1"',
+    "hello",             undefined,          '"hello"',
+    { },                 undefined,          "{ }",
+    [],                  0,                  "[]",
+    /abc/,               undefined,          "/abc/",
+    document,            undefined,          "document",
+    -2147483648,         -2147483648,        "-2147483648",
+    -2147483649,         -2147483649,        "-2147483649",
+    4294967295,          4294967295,         "4294967295",
+    4294967296,          4294967296,         "4294967296",
+    4294967297,          4294967297,         "4294967297",
+    -0.5,                -0.5,               "-0.5",
+    -1.5,                -1.5,               "-1.5",
+    1.5,                 1.5,                "1.5",
+    1.1,                 1.1,                "1.1",
+    1e309,               undefined,          "1e309",
+    1.0000001788139343,  1.0000001788139343, "1.0000001788139343"
+  ];
+
+  // readonly attribute double? interval;
+  test(function() {
+    var event = new DeviceMotionEvent("test");
+    assert_readonly(event, "interval", "readonly attribute interval");
+  }, "interval is readonly");
+
+  test(function() {
+    var event = new DeviceMotionEvent("test");
+    assert_equals(event.interval, null);
+  }, "interval initializes to null");
+
+  for (i = 0; i < valuesDouble.length; i += 3) {
+    var value = valuesDouble[i];
+    var expected = valuesDouble[i + 1];
+    var desc = valuesDouble[i + 2];
+    test(function() {
+      if (expected !== undefined) {
+        var event = new DeviceMotionEvent("test", {
+          interval: value
+        });
+        assert_equals(event.interval, expected);
+      } else {
+        assert_throws(new TypeError(), function() {
+          new DeviceMotionEvent("test", {
+            interval: value
+          });
+        });
+      }
+    }, "interval set to " + desc);
+  }
+
+  // ondevicemotion IDL attribut tests
+  test(function() {
+    var desc = "Expected to find ondevicemotion attribute on window object";
+    assert_idl_attribute(window, "ondevicemotion", desc);
+  }, "ondevicemotion event hander attribute must be on window object.");
+
+  test(function() {
+    var desc = "window.ondevicemotion must be null";
+    assert_equals(window.ondevicemotion, null, desc);
+  }, "ondevicemotion is null");
+
+  test(function() {
+    var desc = "window.ondevicemotion did not accept callable object",
+        func = function() {};
+    window.ondevicemotion = func;
+    assert_equals(window.ondevicemotion, func, desc);
+  }, "ondevicemotion set to function");
+
+  test(function() {
+    var desc = "window.ondevicemotion did not treat noncallable as null";
+    window.ondevicemotion = function() {};
+    window.ondevicemotion = {};
+    assert_equals(window.ondevicemotion, null, desc);
+  }, "treat object as null");
+
+  test(function() {
+    var desc = "window.ondevicemotion did not treat noncallable as null";
+    window.ondevicemotion = function() {};
+    window.ondevicemotion = {
+      call: "test"
+    };
+    assert_equals(window.ondevicemotion, null, desc);
+  }, "treat object with non-callable call property as null");
+
+  test(function() {
+    var desc = "window.ondevicemotion did not treat noncallable (string) as null";
+    window.ondevicemotion = function() {};
+    window.ondevicemotion = "string";
+    assert_equals(window.ondevicemotion, null, desc);
+  }, "treat string as null");
+
+  test(function() {
+    var desc = "window.ondevicemotion did not treat noncallable (number) as null";
+    window.ondevicemotion = function() {};
+    window.ondevicemotion = 123;
+    assert_equals(window.ondevicemotion, null, desc);
+  }, "treat number as null");
+
+  test(function() {
+    var desc = "window.ondevicemotion did not treat noncallable (undefined) as null";
+    window.ondevicemotion = function() {};
+    window.ondevicemotion = undefined;
+    assert_equals(window.ondevicemotion, null, desc);
+  }, "treat undefined as null");
+
+  test(function() {
+    var desc = "window.ondevicemotion did not treat noncallable (array) as null";
+    window.ondevicemotion = function() {};
+    window.ondevicemotion = [];
+    assert_equals(window.ondevicemotion, null, desc);
+  }, "treat array as null");
+
+  test(function() {
+    var desc = "window.ondevicemotion did not treat noncallable host object as null";
+    window.ondevicemotion = function() {};
+    window.ondevicemotion = window.Node;
+    assert_equals(window.ondevicemotion, null, desc);
+  }, "treat non-callable host object as null");
+})();
+</script>
+

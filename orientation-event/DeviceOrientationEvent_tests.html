@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>DeviceOrientationEvent Tests</title>
+<link rel="author" title="Intel" href="http://www.intel.com">
+<link rel="help" href="http://dev.w3.org/geo/api/spec-source-orientation.html#deviceorientation">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="log"></div>
+<script>
+(function() {
+  // [Constructor(DOMString type, optional DeviceOrientationEventInit eventInitDict)]
+  // inheritance tests
+  test(function() {
+    var event = new DeviceOrientationEvent("");
+    assert_true(event instanceof window.DeviceOrientationEvent);
+  }, "the event is an instance of DeviceOrientationEvent");
+
+  test(function() {
+    var event = new DeviceOrientationEvent("");
+    assert_true(event instanceof window.Event);
+  }, "the event inherits from Event");
+
+  // type argument tests
+  test(function() {
+    assert_throws(new TypeError(), function() {
+      new DeviceOrientationEvent();
+    }, "First argument is required, so was expecting a TypeError.");
+  }, "Missing type argument");
+
+  test(function() {
+    var event = new DeviceOrientationEvent(undefined);
+    assert_equals(event.type, "undefined");
+  }, "Event type set to undefined");
+
+  test(function() {
+    var event = new DeviceOrientationEvent(null);
+    assert_equals(event.type, "null");
+  }, "type argument is null");
+
+  test(function() {
+    var event = new DeviceOrientationEvent(123);
+    assert_equals(event.type, "123");
+  }, "type argument is number");
+
+  test(function() {
+    var event = new DeviceOrientationEvent(new Number(123));
+    assert_equals(event.type, "123");
+  }, "type argument is Number");
+
+  test(function() {
+    var event = new DeviceOrientationEvent([]);
+    assert_equals(event.type, "");
+  }, "type argument is array");
+
+  test(function() {
+    var event = new DeviceOrientationEvent(new Array());
+    assert_equals(event.type, "");
+  }, "type argument is instance of Array");
+
+  test(function() {
+    var event = new DeviceOrientationEvent(["t", ["e", ["s", ["t"]]]]);
+    assert_equals(event.type, "t,e,s,t");
+  }, "type argument is nested array");
+
+  test(function() {
+    var event = new DeviceOrientationEvent(Math);
+    assert_equals(event.type, "[object Math]");
+  }, "type argument is host object");
+
+  test(function() {
+    var event = new DeviceOrientationEvent(true);
+    assert_equals(event.type, "true");
+  }, "type argument is boolean (true)");
+
+  test(function() {
+    var event = new DeviceOrientationEvent(new Boolean(true));
+    assert_equals(event.type, "true");
+  }, "type argument is instance of Boolean (true)");
+
+  test(function() {
+    var event = new DeviceOrientationEvent(false);
+    assert_equals(event.type, "false");
+  }, "type argument is boolean (false)");
+
+  test(function() {
+    var event = new DeviceOrientationEvent(new Boolean(false));
+    assert_equals(event.type, "false");
+  }, "type argument is instance of Boolean (false)");
+
+  test(function() {
+    var event = new DeviceOrientationEvent("test");
+    assert_equals(event.type, "test");
+  }, "type argument is string");
+
+  test(function() {
+    var event = new DeviceOrientationEvent(new String("test"));
+    assert_equals(event.type, "test");
+  }, "type argument is instance of String");
+
+  test(function() {
+    var event = new DeviceOrientationEvent(function test() {});
+    assert_regexp_match(event.type, /function test.+{\s?}/);
+  }, "type argument is function");
+
+  test(function() {
+    var event = new DeviceOrientationEvent({
+      toString: function() {
+        return "123";
+      }
+    });
+    assert_equals(event.type, "123");
+  }, "type argument is complext object, with toString method");
+
+  test(function() {
+    assert_throws(null, function() {
+      new DeviceOrientationEvent({
+        toString: function() {
+          return function() {}
+        }
+      });
+    });
+  }, "toString is of type function");
+
+  //eventInitDict attribute tests
+  test(function() {
+    var event = new DeviceOrientationEvent("test", undefined);
+    assert_equals(event.alpha, null);
+    assert_equals(event.beta, null);
+    assert_equals(event.gamma, null);
+    assert_false(event.absolute);
+  }, "eventInitDict argument sets to undefined");
+
+  test(function() {
+    var event = new DeviceOrientationEvent("test", null);
+    assert_equals(event.alpha, null);
+    assert_equals(event.beta, null);
+    assert_equals(event.gamma, null);
+    assert_false(event.absolute);
+  }, "eventInitDict argument is null");
+
+  test(function() {
+    var date = new Date();
+    assert_throws(new TypeError(), function() {
+      new DeviceOrientationEvent("test", date);
+    });
+  }, "eventInitDict argument is Date object");
+
+  test(function() {
+    var regexp = /abc/;
+    assert_throws(new TypeError(), function() {
+      new DeviceOrientationEvent("test", regexp);
+    });
+  }, "eventInitDict argument is RegExp object");
+
+  test(function() {
+    assert_throws(new TypeError(), function() {
+      new DeviceOrientationEvent("test", false);
+    });
+  }, "eventInitDict argument is boolean");
+
+  test(function() {
+    assert_throws(new TypeError(), function() {
+      new DeviceOrientationEvent("test", 123);
+    });
+  }, "eventInitDict argument is number");
+
+  test(function() {
+    assert_throws(new TypeError(), function() {
+      new DeviceOrientationEvent("test", "hello");
+    });
+  }, "eventInitDict argument is string");
+
+  var i = 0;
+  var valuesDouble = [
+    undefined,           undefined,          "undefined",
+    null,                0,                  "null",
+    false,               0,                  "false",
+    true,                1,                  "true",
+    0,                   0,                  "0",
+    1,                   1,                  "1",
+    -1,                  -1,                 "-1",
+    0.5,                 0.5,                "0.5",
+    Infinity,            undefined,          "Infinity",
+    -Infinity,           undefined,          "-Infinity",
+    NaN,                 undefined,          "NaN",
+    -0,                  -0,                 "-0",
+    "",                  0,                  '""',
+    "1",                 1,                  '"1"',
+    "hello",             undefined,          '"hello"',
+    { },                 undefined,          "{ }",
+    [],                  0,                  "[]",
+    /abc/,               undefined,          "/abc/",
+    document,            undefined,          "document",
+    -2147483648,         -2147483648,        "-2147483648",
+    -2147483649,         -2147483649,        "-2147483649",
+    4294967295,          4294967295,         "4294967295",
+    4294967296,          4294967296,         "4294967296",
+    4294967297,          4294967297,         "4294967297",
+    -0.5,                -0.5,               "-0.5",
+    -1.5,                -1.5,               "-1.5",
+    1.5,                 1.5,                "1.5",
+    1.1,                 1.1,                "1.1",
+    1e309,               undefined,          "1e309",
+    1.0000001788139343,  1.0000001788139343, "1.0000001788139343"
+  ];
+
+  // readonly attribute double? alpha;  in [0, 360)
+  test(function() {
+    var event = new DeviceOrientationEvent("test");
+    assert_readonly(event, "alpha", "readonly attribute alpha");
+  }, "alpha is readonly");
+
+  test(function() {
+    var event = new DeviceOrientationEvent("test");
+    assert_equals(event.alpha, null);
+  }, "alpha initializes to null");
+
+  for (i = 0; i < valuesDouble.length; i += 3) {
+    var value = valuesDouble[i];
+    var expected = valuesDouble[i + 1];
+    var desc = valuesDouble[i + 2];
+    test(function() {
+      if (expected !== undefined) {
+        var event = new DeviceOrientationEvent("test", {
+          alpha: value
+        });
+        assert_equals(event.alpha, expected);
+      } else {
+        assert_throws(new TypeError(), function() {
+          new DeviceOrientationEvent("test", {
+            alpha: value
+          });
+        });
+      }
+    }, "alpha set to " + desc);
+  }
+
+  // readonly attribute double? beta;  in [-180, 180)
+  test(function() {
+    var event = new DeviceOrientationEvent("test");
+    assert_readonly(event, "beta", "readonly attribute beta");
+  }, "beta is readonly");
+
+  test(function() {
+    var event = new DeviceOrientationEvent("test");
+    assert_equals(event.beta, null);
+  }, "beta initializes to null");
+
+  for (i = 0; i < valuesDouble.length; i += 3) {
+    var value = valuesDouble[i];
+    var expected = valuesDouble[i + 1];
+    var desc = valuesDouble[i + 2];
+    test(function() {
+      if (expected !== undefined) {
+        var event = new DeviceOrientationEvent("test", {
+          beta: value
+        });
+        assert_equals(event.beta, expected);
+      } else {
+        assert_throws(new TypeError(), function() {
+          new DeviceOrientationEvent("test", {
+            beta: value
+          });
+        });
+      }
+    }, "beta set to " + desc);
+  }
+
+  // readonly attribute double? gamma; in [-90, 90)
+  test(function() {
+    var event = new DeviceOrientationEvent("test");
+    assert_readonly(event, "gamma", "readonly attribute gamma");
+  }, "gamma is readonly");
+
+  test(function() {
+    var event = new DeviceOrientationEvent("test");
+    assert_equals(event.gamma, null);
+  }, "gamma initializes to null");
+
+  for (i = 0; i < valuesDouble.length; i += 3) {
+    var value = valuesDouble[i];
+    var expected = valuesDouble[i + 1];
+    var desc = valuesDouble[i + 2];
+    test(function() {
+      if (expected !== undefined) {
+        var event = new DeviceOrientationEvent("test", {
+          gamma: value
+        });
+        assert_equals(event.gamma, expected);
+      } else {
+        assert_throws(new TypeError(), function() {
+          new DeviceOrientationEvent("test", {
+            gamma: value
+          });
+        });
+      }
+    }, "gamma set to " + desc);
+  }
+
+  // readonly attribute boolean absolute;
+  var valuesBoolean = [
+    undefined,   "undefined",
+    null,        "null",
+    false,       "false",
+    true,        "true",
+    0,           "0",
+    1,           "1",
+    -1,          "-1",
+    0.5,         "0.5",
+    Infinity,    "Infinity",
+    -Infinity,   "-Infinity",
+    NaN,         "NaN",
+    -0,          "-0",
+    "",          '""',
+    "1",         '"1"',
+    "hello",     '"hello"',
+    { },         "{ }",
+    [],          "[]",
+    /abc/,       "/abc/",
+    document,    "document"
+  ];
+
+  test(function() {
+    var event = new DeviceOrientationEvent("test");
+    assert_readonly(event, "absolute", "readonly attribute absolute");
+  }, "absolute is readonly");
+
+  test(function() {
+    var event = new DeviceOrientationEvent("test");
+    assert_false(event.absolute);
+  }, "absolute initializes to false");
+
+  for (i = 0; i < valuesBoolean.length; i += 2) {
+    var value = valuesBoolean[i];
+    var expected = !!valuesBoolean[i];
+    var desc = valuesBoolean[i + 1];
+    test(function() {
+      var event = new DeviceOrientationEvent("test", {
+        absolute: value
+      });
+      assert_equals(event.absolute, expected);
+    }, "absolute set to " + desc);
+  }
+
+  // ondeviceorientation IDL attribut tests
+  test(function() {
+    var desc = "Expected to find ondeviceorientation attribute on window object";
+    assert_idl_attribute(window, "ondeviceorientation", desc);
+  }, "ondeviceorientation event hander attribute must be on window object.");
+
+  test(function() {
+    var desc = "window.ondeviceorientation must be null";
+    assert_equals(window.ondeviceorientation, null, desc);
+  }, "ondeviceorientation is null");
+
+  test(function() {
+    var desc = "window.ondeviceorientation did not accept callable object",
+        func = function() {};
+    window.ondeviceorientation = func;
+    assert_equals(window.ondeviceorientation, func, desc);
+  }, "ondeviceorientation set to function");
+
+  test(function() {
+    var desc = "window.ondeviceorientation did not treat noncallable as null";
+    window.ondeviceorientation = function() {};
+    window.ondeviceorientation = {};
+    assert_equals(window.ondeviceorientation, null, desc);
+  }, "treat object as null");
+
+  test(function() {
+    var desc = "window.ondeviceorientation did not treat noncallable as null";
+    window.ondeviceorientation = function() {};
+    window.ondeviceorientation = {
+      call: "test"
+    };
+    assert_equals(window.ondeviceorientation, null, desc);
+  }, "treat object with non-callable call property as null");
+
+  test(function() {
+    var desc = "window.ondeviceorientation did not treat noncallable (string) as null";
+    window.ondeviceorientation = function() {};
+    window.ondeviceorientation = "string";
+    assert_equals(window.ondeviceorientation, null, desc);
+  }, "treat string as null");
+
+  test(function() {
+    var desc = "window.ondeviceorientation did not treat noncallable (number) as null";
+    window.ondeviceorientation = function() {};
+    window.ondeviceorientation = 123;
+    assert_equals(window.ondeviceorientation, null, desc);
+  }, "treat number as null");
+
+  test(function() {
+    var desc = "window.ondeviceorientation did not treat noncallable (undefined) as null";
+    window.ondeviceorientation = function() {};
+    window.ondeviceorientation = undefined;
+    assert_equals(window.ondeviceorientation, null, desc);
+  }, "treat undefined as null");
+
+  test(function() {
+    var desc = "window.ondeviceorientation did not treat noncallable (array) as null";
+    window.ondeviceorientation = function() {};
+    window.ondeviceorientation = [];
+    assert_equals(window.ondeviceorientation, null, desc);
+  }, "treat array as null");
+
+  test(function() {
+    var desc = "window.ondeviceorientation did not treat noncallable host object as null";
+    window.ondeviceorientation = function() {};
+    window.ondeviceorientation = window.Node;
+    assert_equals(window.ondeviceorientation, null, desc);
+  }, "treat non-callable host object as null");
+})();
+</script>
+
