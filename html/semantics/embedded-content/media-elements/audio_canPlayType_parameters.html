@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Audio Test: audio_canPlayType_parameters</title>
+<link rel="author" title="Intel" href="http://www.intel.com">
+<link rel="help" href="http://www.w3.org/TR/2012/WD-html5-20121025/media-elements.html#htmlmediaelement">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<audio id="m">
+  Your browser does not support media elements.
+</audio>
+<div id="log"></div>
+<script>
+var media = document.getElementById("m");
+
+test(function () {
+  assert_equals(media.canPlayType(null), '', "The return value of media.canPlayType");
+}, "Check if the audio.canPlayType with null parameter returns empty string");
+
+test(function () {
+  assert_equals(media.canPlayType(""), '', "The return value of media.canPlayType");
+}, "Check if the audio.canPlayType with the empty string parameter returns empty string");
+
+test(function () {
+  assert_equals(media.canPlayType(), '', "The return value of media.canPlayType");
+}, "Check if the audio.canPlayType with no parameter returns empty string");
+</script>

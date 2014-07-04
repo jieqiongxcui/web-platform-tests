@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Audio Test: audio_controller_values</title>
+<link rel="author" title="Intel" href="http://www.intel.com">
+<link rel="help" href="http://www.w3.org/TR/2012/WD-html5-20121025/media-elements.html#htmlmediaelement">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<audio id="m">
+  Your browser does not support media elements.
+</audio>
+<div id="log"></div>
+<script>
+var media = document.getElementById("m");
+
+test(function () {
+  assert_equals(media.controller, null, "The default value of media.controller");
+}, "Check if the defaut value of audio.controller is null");
+
+test(function () {
+  var myController = new MediaController();
+  media.controller = myController;
+  assert_not_equals(media.controls, null, "The media.controls value");
+}, "Check if the value of audio.controller is not null when set it an object MediaController");
+</script>

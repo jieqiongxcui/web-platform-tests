@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Audio Test: audio_autoplay_values</title>
+<link rel="author" title="Intel" href="http://www.intel.com">
+<link rel="help" href="http://www.w3.org/TR/2012/WD-html5-20121025/media-elements.html#htmlmediaelement">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<audio id="m" autoplay>
+  Your browser does not support media elements.
+</audio>
+<div id="log"></div>
+<script>
+var media = document.getElementById("m");
+
+test(function () {
+  assert_true(media.autoplay, "media.autoplay is true");
+}, "Check if the audio.autoplay returns true when the autoplay attribute is present");
+
+test(function () {
+  media.autoplay = null;
+  assert_false(media.autoplay, "media.autoplay is false");
+}, "Check if the value of autoplay is false when set it null");
+
+test(function () {
+  media.autoplay = "";
+  assert_false(media.autoplay, "media.autoplay is false");
+}, "Check if the value of autoplay is false when set it empty string");
+</script>

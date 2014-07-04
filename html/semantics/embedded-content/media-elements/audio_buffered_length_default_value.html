@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Audio Test: audio_buffered_length_default_value</title>
+<link rel="author" title="Intel" href="http://www.intel.com">
+<link rel="help" href="http://www.w3.org/TR/2012/WD-html5-20121025/media-elements.html#htmlmediaelement">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<audio id="m">
+  Your browser does not support media elements.
+</audio>
+<div id="log"></div>
+<script>
+test(function () {
+  var media = document.getElementById("m");
+  assert_equals(media.buffered.length, 0, "The default value of length");
+}, "Check if the default value of media.buffered.length is 0");
+</script>
