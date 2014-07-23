@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Audio Test: audio_defaultPlaybackRate_values</title>
+<link rel="author" title="Intel" href="http://www.intel.com">
+<link rel="help" href="http://www.w3.org/TR/2014/CR-html5-20140429/embedded-content-0.html#htmlmediaelement">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<audio id="m" mediagroup=movie>
+  Your browser does not support media elements.
+</audio>
+<div id="log"></div>
+<script>
+var media = document.getElementById("m");
+test( function() {
+  assert_equals(media.defaultPlaybackRate, 1.0, "the defaut value of media.defaultPlaybackRate");
+}, "Check if the default value of audio.defaultPlaybackRate is 1.0");
+
+test( function() {
+  var control = media.controller;
+  control.defaultPlaybackRate = 2.0;
+  assert_equals(media.defaultPlaybackRate, 1.0, "the value of media.defaultPlaybackRate");
+}, "Check if audio.defaultPlaybackRate have no effect when the media element has a current media controller");
+
+test( function() {
+  media.defaultPlaybackRate = 0.5;
+  assert_equals(media.defaultPlaybackRate, 0.5, "the value of media.defaultPlaybackRate");
+}, "Check if the value of audio.defaultPlaybackRate is 0.5");
+</script>

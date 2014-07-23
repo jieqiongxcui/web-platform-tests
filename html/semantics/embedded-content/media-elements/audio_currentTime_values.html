@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Audio Test: audio_currentTime_values</title>
+<link rel="author" title="Intel" href="http://www.intel.com">
+<link rel="help" href="http://www.w3.org/TR/2014/CR-html5-20140429/embedded-content-0.html#htmlmediaelement">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<audio id="m" src="/media/sound_5.mp4" controls>
+  Your browser does not support media elements.
+</audio>
+<div id="log"></div>
+<script>
+var media = document.getElementById("m");
+test( function() {
+  assert_equals(media.currentTime, 0, "the defaut value of media.currentTime");
+}, "Check if the audio.currentTime initially be set to zero seconds");
+
+async_test(function (t) {
+  media.addEventListener("loadedmetadata", t.step_func(function () {
+    media.currentTime = 4;
+    assert_equals(media.currentTime, 4, "The value of media.currentTime");
+    t.done();
+  }));
+}, "Check if the audio.currentTime returns the current playback position");
+
+async_test(function (t) {
+  media.addEventListener("loadedmetadata", t.step_func(function () {
+    media.currentTime = media.duration;
+    assert_true(media.ended, "The value of media.ended is true");
+    t.done();
+  }));
+}, "Check if the audio.currentTime returns the end playback position");
+</script>

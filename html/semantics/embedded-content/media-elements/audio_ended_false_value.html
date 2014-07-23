@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Audio Test: audio_ended_false_value</title>
+<link rel="author" title="Intel" href="http://www.intel.com">
+<link rel="help" href="http://www.w3.org/TR/2014/CR-html5-20140429/embedded-content-0.html#htmlmediaelement">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<audio id="m" src="/media/sound_5.mp4" controls autoplay>
+  Your browser does not support media elements.
+</audio>
+<div id="log"></div>
+<script>
+var media = document.getElementById("m");
+
+async_test(function (t) {
+  media.addEventListener("canplaythrough", t.step_func(function () {
+    assert_false(media.ended, "The value of media.ended is false");
+    t.done();
+  }));
+}, "Check if the audio.ended should be false during canplaythrough event");
+
+async_test(function (t) {
+  media.addEventListener("loadeddata", t.step_func(function () {
+    assert_false(media.ended, "The value of media.ended is false");
+    t.done();
+  }));
+}, "Check if the audio.ended should be false during loadeddata event");
+
+async_test(function (t) {
+  media.addEventListener("playing", t.step_func(function () {
+    assert_false(media.ended, "The value of media.ended is false");
+    t.done();
+  }));
+}, "Check if the audio.ended should be false during playing event");
+</script>
